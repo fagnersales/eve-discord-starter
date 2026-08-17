@@ -1,0 +1,27 @@
+{
+  "name": "eve-discord-starter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "eve build",
+    "dev": "eve dev",
+    "gateway": "node --env-file=.env.local gateway/discord.ts",
+    "start": "eve start",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "ai": "^7.0.58",
+    "convex": "^1.44.0",
+    "eve": "^0.38.2",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.x",
+    "discord.js": "^14.27.0",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

@@ -1,0 +1,8 @@
+minimumReleaseAgeExclude:
+  - "@ai-sdk/*"
+  - "@vercel/*"
+  - ai
+  - eve
+allowBuilds:
+  esbuild: true
+  sharp: false
