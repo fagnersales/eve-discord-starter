@@ -11,8 +11,12 @@ export const get = query({
 });
 
 export const set = mutation({
-  args: { conversationKey: v.string(), eveSessionId: v.string() },
-  handler: async (ctx, { conversationKey, eveSessionId }) => {
+  args: {
+    conversationKey: v.string(),
+    eveSessionId: v.string(),
+    streamIndex: v.optional(v.number()),
+  },
+  handler: async (ctx, { conversationKey, eveSessionId, streamIndex }) => {
     const existing = await ctx.db
       .query("conversationSessions")
       .withIndex("by_conversation_key", (q) => q.eq("conversationKey", conversationKey))
@@ -20,13 +24,14 @@ export const set = mutation({
     const now = Date.now();
 
     if (existing) {
-      await ctx.db.patch(existing._id, { eveSessionId, updatedAt: now });
+      await ctx.db.patch(existing._id, { eveSessionId, streamIndex, updatedAt: now });
       return existing._id;
     }
 
     return await ctx.db.insert("conversationSessions", {
       conversationKey,
       eveSessionId,
+      streamIndex,
       createdAt: now,
       updatedAt: now,
     });

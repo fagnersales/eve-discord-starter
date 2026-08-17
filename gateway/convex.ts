@@ -6,13 +6,23 @@ if (!convexUrl) throw new Error("CONVEX_URL is required");
 
 const convex = new ConvexHttpClient(convexUrl);
 
-export async function getSessionId(conversationKey: string) {
-  const session = await convex.query(api.sessions.get, { conversationKey });
-  return session?.eveSessionId;
+export interface ConversationSessionState {
+  eveSessionId: string;
+  streamIndex?: number;
 }
 
-export async function setSessionId(conversationKey: string, eveSessionId: string) {
-  await convex.mutation(api.sessions.set, { conversationKey, eveSessionId });
+export async function getSessionState(conversationKey: string): Promise<ConversationSessionState | undefined> {
+  const session = await convex.query(api.sessions.get, { conversationKey });
+  if (!session) return undefined;
+  return { eveSessionId: session.eveSessionId, streamIndex: session.streamIndex };
+}
+
+export async function setSessionState(conversationKey: string, state: { sessionId: string; streamIndex?: number }) {
+  await convex.mutation(api.sessions.set, {
+    conversationKey,
+    eveSessionId: state.sessionId,
+    streamIndex: state.streamIndex,
+  });
 }
 
 export async function removeSessionId(conversationKey: string) {
