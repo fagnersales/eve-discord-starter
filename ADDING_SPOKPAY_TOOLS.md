@@ -1,7 +1,7 @@
 # Adding SpokPay Tools
 
-A SpokPay tool is always a two-repo change: the operation is exposed in the
-**spokpay** backend, then consumed by the eve agent in the **spoki** repo
+A SpokPay tool depends on a route that already exists in the **spokpay**
+backend; the agent side lives in the **spoki** repo
 (`/home/yagas-pc/work/spoki`). The wiring already exists — follow it.
 
 ```text
@@ -21,15 +21,15 @@ Discord -> spoki gateway -> eve agent (spoki repo)
 
 ## Process
 
-### 1. spokpay repo
+### 1. Find the corresponding route
 
-1. Add the domain function in `convex/spoki/` (e.g. `catalogs.ts`).
-   Reuse existing permission logic — everything is scoped by `discordUserId`,
-   never by a raw admin secret.
-2. Add the handler and register the route in `convex/spoki/routes.ts`
-   (`registerSpokiRoutes`). Follow the existing JSON error-code convention
-   (`unauthorized`, `invalid_payload`, `forbidden`, …).
-3. Deploy: `pnpm convex deploy`. The route must be live before the tool ships.
+Check `spokpay/convex/spoki/` for a route that already serves the operation
+the new tool needs.
+
+- **Found it** — continue to step 2, spoki side only.
+- **Not found** — stop. Do not build anything on the spokpay side. Tell the
+  user which route is missing and ask them to finish that part on spokpay
+  beforehand; resume once it is deployed.
 
 ### 2. spoki repo
 
@@ -47,8 +47,7 @@ Discord -> spoki gateway -> eve agent (spoki repo)
 
 ## Checklist
 
-- [ ] spokpay: function in `convex/spoki/`, route registered in `routes.ts`
-- [ ] spokpay: `pnpm convex deploy`
+- [ ] Corresponding route found in `spokpay/convex/spoki/` (or user finished it first)
 - [ ] spoki: helper + schema in `agent/lib/spokpay.ts`
 - [ ] spoki: tool in `agent/tools/<name>.ts`, caller via `requireDiscordCaller`
 - [ ] spoki: typecheck, build, deploy
